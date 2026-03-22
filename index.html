@@ -1,54 +1,82 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⚽ Football Champion - لعبة كرة القدم</title>
-  <meta name="description" content="لعبة كرة قدم تنافسية احترافية مبنية بتقنيات الويب HTML5 Canvas" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+  <title>⚽ Football Champion v2 - لعبة كرة القدم</title>
+  <meta name="description" content="لعبة كرة قدم تنافسية احترافية - Football Champion"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-<!-- Main Menu Screen -->
+<!-- ===== MAIN MENU ===== -->
 <div id="mainMenu" class="screen active">
   <div class="menu-bg">
-    <div class="stars"></div>
+    <div class="floating-balls">
+      <span class="fb fb1">⚽</span><span class="fb fb2">⚽</span>
+      <span class="fb fb3">⚽</span><span class="fb fb4">⚽</span>
+    </div>
     <div class="menu-content">
       <div class="logo-area">
         <div class="ball-logo">⚽</div>
         <h1 class="game-title">FOOTBALL<br/><span>CHAMPION</span></h1>
-        <p class="game-subtitle">بطولة كرة القدم الاحترافية</p>
+        <div class="version-badge">v2.0 - نسخة محترفة</div>
       </div>
       <div class="menu-buttons">
-        <button class="btn btn-primary" onclick="startGame('easy')">
-          <span class="btn-icon">🎮</span> ابدأ اللعب - سهل
+        <button class="btn btn-primary" onclick="showTeamSelect()">
+          <span class="btn-icon">🎮</span> ابدأ مباراة سريعة
         </button>
-        <button class="btn btn-warning" onclick="startGame('medium')">
-          <span class="btn-icon">⚡</span> ابدأ اللعب - متوسط
+        <button class="btn btn-warning" onclick="showPenaltyMode()">
+          <span class="btn-icon">🥅</span> ركلات الترجيح
         </button>
-        <button class="btn btn-danger" onclick="startGame('hard')">
-          <span class="btn-icon">🔥</span> ابدأ اللعب - صعب
+        <button class="btn btn-info" onclick="showTournament()">
+          <span class="btn-icon">🏆</span> وضع البطولة
         </button>
-        <button class="btn btn-info" onclick="showControls()">
-          <span class="btn-icon">⌨️</span> التحكم
+        <button class="btn btn-secondary" onclick="showControls()">
+          <span class="btn-icon">⌨️</span> أزرار التحكم
         </button>
       </div>
-      <div class="teams-preview">
-        <div class="team-card home">
-          <div class="team-color" style="background:#e63946;"></div>
-          <span>فريقك (أحمر)</span>
-        </div>
-        <div class="vs-badge">VS</div>
-        <div class="team-card away">
-          <div class="team-color" style="background:#2196F3;"></div>
-          <span>الخصم (أزرق)</span>
-        </div>
+      <div class="menu-footer">
+        <span>🔊</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="soundToggle" checked/>
+          <span class="toggle-slider"></span>
+        </label>
+        <span>الصوت</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Controls Screen -->
+<!-- ===== TEAM SELECT ===== -->
+<div id="teamSelectScreen" class="screen">
+  <div class="team-select-content">
+    <h2>🏟️ اختر فريقك</h2>
+    <div class="teams-grid" id="teamsGrid"></div>
+    <div class="difficulty-row">
+      <span>مستوى الصعوبة:</span>
+      <div class="diff-buttons">
+        <button class="diff-btn active" data-diff="easy">⭐ سهل</button>
+        <button class="diff-btn" data-diff="medium">⭐⭐ متوسط</button>
+        <button class="diff-btn" data-diff="hard">⭐⭐⭐ صعب</button>
+      </div>
+    </div>
+    <div class="time-row">
+      <span>مدة المباراة:</span>
+      <div class="diff-buttons">
+        <button class="time-btn active" data-time="3">3 دقائق</button>
+        <button class="time-btn" data-time="5">5 دقائق</button>
+        <button class="time-btn" data-time="10">10 دقائق</button>
+      </div>
+    </div>
+    <div class="team-select-actions">
+      <button class="btn btn-primary" onclick="startSelectedGame()">▶ ابدأ المباراة</button>
+      <button class="btn btn-secondary" onclick="showMenu()">🔙 رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTROLS ===== -->
 <div id="controlsScreen" class="screen">
   <div class="controls-content">
     <h2>🕹️ أزرار التحكم</h2>
@@ -59,43 +87,87 @@
       <div class="control-item"><kbd>C</kbd><span>عرضية / تمريرة طويلة</span></div>
       <div class="control-item"><kbd>Shift</kbd><span>جري سريع</span></div>
       <div class="control-item"><kbd>Enter</kbd><span>إيقاف مؤقت</span></div>
+      <div class="control-item"><kbd>Q</kbd><span>تبديل التشكيل</span></div>
+      <div class="control-item"><kbd>Tab</kbd><span>تغيير اللاعب</span></div>
     </div>
     <div class="mobile-note">📱 على الجوال: استخدم الأزرار الظاهرة على الشاشة</div>
     <button class="btn btn-primary" onclick="showMenu()">🔙 رجوع</button>
   </div>
 </div>
 
-<!-- Game Screen -->
+<!-- ===== TOURNAMENT ===== -->
+<div id="tournamentScreen" class="screen">
+  <div class="tournament-content">
+    <h2>🏆 وضع البطولة</h2>
+    <div class="bracket" id="bracket"></div>
+    <div id="tournamentStatus" class="tournament-status"></div>
+    <div class="tournament-actions">
+      <button class="btn btn-primary" id="nextMatchBtn" onclick="playNextMatch()">▶ ابدأ المباراة التالية</button>
+      <button class="btn btn-secondary" onclick="showMenu()">🔙 رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
 <div id="gameScreen" class="screen">
+
   <!-- HUD -->
   <div id="hud">
     <div class="hud-team home-team">
-      <div class="team-flag" style="background:#e63946;"></div>
-      <span class="team-name">فريقك</span>
+      <div class="team-emblem" id="homeEmblem">🔴</div>
+      <span class="team-name" id="homeTeamName">فريقك</span>
+      <div class="cards-display" id="homeCards"></div>
       <span class="score" id="scoreHome">0</span>
     </div>
     <div class="hud-center">
-      <div class="time-display">
+      <div class="time-block">
         <span id="gameTime">00:00</span>
-        <div class="half-indicator" id="halfIndicator">الشوط الأول</div>
+        <div class="half-pill" id="halfIndicator">الشوط 1</div>
+      </div>
+      <div class="possession-bar">
+        <div class="poss-fill home-poss" id="homePoss" style="width:50%"></div>
+        <div class="poss-fill away-poss" id="awayPoss" style="width:50%"></div>
       </div>
     </div>
     <div class="hud-team away-team">
       <span class="score" id="scoreAway">0</span>
-      <span class="team-name">الخصم</span>
-      <div class="team-flag" style="background:#2196F3;"></div>
+      <div class="cards-display" id="awayCards"></div>
+      <span class="team-name" id="awayTeamName">الخصم</span>
+      <div class="team-emblem" id="awayEmblem">🔵</div>
     </div>
   </div>
 
+  <!-- Formation badge -->
+  <div id="formationBadge" class="formation-badge">4-3-3</div>
+
   <!-- Canvas -->
   <canvas id="gameCanvas"></canvas>
+
+  <!-- Foul notification -->
+  <div id="foulNotif" class="foul-notif hidden"></div>
 
   <!-- Pause Overlay -->
   <div id="pauseOverlay" class="overlay hidden">
     <div class="pause-box">
       <h2>⏸ إيقاف مؤقت</h2>
+      <div class="pause-stats" id="pauseStats"></div>
       <button class="btn btn-primary" onclick="resumeGame()">▶ متابعة</button>
+      <button class="btn btn-warning" onclick="showFormationPicker()">⚙️ تغيير التشكيل</button>
       <button class="btn btn-danger" onclick="endGame()">🚪 الخروج</button>
+    </div>
+  </div>
+
+  <!-- Formation Picker -->
+  <div id="formationPicker" class="overlay hidden">
+    <div class="formation-box">
+      <h3>⚙️ اختر التشكيل</h3>
+      <div class="formation-options">
+        <button class="form-btn" onclick="setFormation('4-3-3')">4-3-3<br/>هجومي</button>
+        <button class="form-btn" onclick="setFormation('4-4-2')">4-4-2<br/>متوازن</button>
+        <button class="form-btn" onclick="setFormation('5-3-2')">5-3-2<br/>دفاعي</button>
+        <button class="form-btn" onclick="setFormation('3-5-2')">3-5-2<br/>وسط قوي</button>
+      </div>
+      <button class="btn btn-primary" onclick="closeFormation()">تأكيد</button>
     </div>
   </div>
 
@@ -103,9 +175,13 @@
   <div id="goalOverlay" class="overlay hidden">
     <div class="goal-box">
       <div class="goal-text">⚽ GOAL!</div>
-      <div class="goal-scorer" id="goalScorer">هدف!</div>
+      <div class="goal-scorer" id="goalScorer"></div>
+      <div class="goal-meta" id="goalMeta"></div>
     </div>
   </div>
+
+  <!-- Mini Map -->
+  <canvas id="miniMap" class="mini-map"></canvas>
 
   <!-- Mobile Controls -->
   <div id="mobileControls">
@@ -113,32 +189,58 @@
       <button class="dpad-btn up" data-key="ArrowUp">▲</button>
       <div class="dpad-mid">
         <button class="dpad-btn left" data-key="ArrowLeft">◄</button>
+        <div class="dpad-center"></div>
         <button class="dpad-btn right" data-key="ArrowRight">►</button>
       </div>
       <button class="dpad-btn down" data-key="ArrowDown">▼</button>
     </div>
+    <div class="mobile-center-btns">
+      <button class="mini-btn" data-key="Tab">🔄</button>
+      <button class="mini-btn" data-key="Enter">⏸</button>
+    </div>
     <div class="action-buttons">
-      <button class="action-btn shoot" data-key=" ">⚽</button>
-      <button class="action-btn tackle" data-key="x">🦵</button>
-      <button class="action-btn pass" data-key="c">↗</button>
+      <button class="action-btn long-pass" data-key="c">↗<small>تمرير</small></button>
+      <div class="action-row">
+        <button class="action-btn tackle" data-key="x">🦵<small>تدخل</small></button>
+        <button class="action-btn shoot" data-key=" ">⚽<small>سدد</small></button>
+      </div>
+      <button class="action-btn sprint-btn" data-key="Shift">💨<small>جري</small></button>
     </div>
   </div>
 </div>
 
-<!-- End Game Screen -->
+<!-- ===== PENALTY SCREEN ===== -->
+<div id="penaltyScreen" class="screen">
+  <div id="penaltyHUD" class="penalty-hud">
+    <div class="penalty-team">
+      <span id="penaltyHomeName">أنت</span>
+      <div id="penaltyHome" class="penalty-dots"></div>
+    </div>
+    <div class="penalty-round" id="penaltyRound">الضربة 1</div>
+    <div class="penalty-team">
+      <div id="penaltyAway" class="penalty-dots"></div>
+      <span id="penaltyAwayName">الخصم</span>
+    </div>
+  </div>
+  <canvas id="penaltyCanvas"></canvas>
+  <div id="penaltyInstruct" class="penalty-instruct">اضغط Space للتسديد!</div>
+</div>
+
+<!-- ===== END SCREEN ===== -->
 <div id="endScreen" class="screen">
   <div class="end-content">
     <div class="trophy" id="trophyIcon">🏆</div>
     <h2 id="endTitle">نهاية المباراة!</h2>
     <div class="final-score">
-      <span id="finalHome">0</span>
-      <span class="dash"> - </span>
-      <span id="finalAway">0</span>
+      <div class="fs-team"><span id="endHomeTeam">فريقك</span><span class="fs-score" id="finalHome">0</span></div>
+      <span class="fs-dash">-</span>
+      <div class="fs-team"><span class="fs-score" id="finalAway">0</span><span id="endAwayTeam">الخصم</span></div>
     </div>
-    <p id="endMessage">أحسنت!</p>
-    <div class="end-stats" id="endStats"></div>
+    <p id="endMessage"></p>
+    <div class="end-stats-grid" id="endStats"></div>
     <div class="end-buttons">
-      <button class="btn btn-primary" onclick="restartGame()">🔄 إعادة اللعب</button>
+      <button class="btn btn-primary" onclick="restartGame()">🔄 إعادة</button>
+      <button class="btn btn-warning" onclick="showPenaltyMode()">🥅 ركلات</button>
       <button class="btn btn-secondary" onclick="showMenu()">🏠 القائمة</button>
     </div>
   </div>
@@ -147,8 +249,11 @@
 <script src="js/audio.js"></script>
 <script src="js/ball.js"></script>
 <script src="js/player.js"></script>
+<script src="js/goalkeeper.js"></script>
 <script src="js/ai.js"></script>
+<script src="js/referee.js"></script>
 <script src="js/renderer.js"></script>
+<script src="js/penalty.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>
